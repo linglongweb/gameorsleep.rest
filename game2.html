@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tanks of the Galaxy - Epic Space Tank Battle | StarCommand Games</title>
+    <meta name="description" content="Command your battle tank through alien planets and defeat enemy forces in this action-packed space shooter. Upgrade your tank and conquer the galaxy!">
+    <link rel="canonical" href="https://www.starcommandgames.com/tanks-of-the-galaxy">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 苹果风格太空主题配色方案 */
+        :root {
+            --space-dark: #0a0e17;
+            --space-blue: #1a365d;
+            --neon-blue: #00b4ff;
+            --neon-purple: #a100ff;
+            --apple-light: #f5f7ff;
+            --apple-border: #2a3a5c;
+            --space-gray: #1e293b;
+            --battle-orange: #ff6b35;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--space-dark), var(--space-blue));
+            color: var(--apple-light);
+            line-height: 1.7;
+            font-family: 'Roboto', sans-serif;
+            padding: 0;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-attachment: fixed;
+            background-size: cover;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(26, 54, 93, 0.2) 0%, rgba(10, 14, 23, 0.8) 70%);
+            z-index: -1;
+        }
+        
+        /* 星空背景效果 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -2;
+        }
+        
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 4s) infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        /* 导航栏 - 太空科技风格 */
+        header {
+            background-color: rgba(10, 14, 23, 0.85);
+            border-bottom: 1px solid var(--apple-border);
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--apple-light);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            letter-spacing: 1px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo i {
+            margin-right: 12px;
+            font-size: 32px;
+            color: var(--neon-blue);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav li {
+            margin-left: 30px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--apple-light);
+            font-size: 18px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            padding: 8px 5px;
+        }
+        
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--neon-blue);
+            transition: width 0.3s;
+        }
+        
+        nav a:hover {
+            color: var(--neon-blue);
+        }
+        
+        nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* 主内容区 */
+        main {
+            flex: 1;
+            padding: 40px 30px;
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 20px;
+            margin: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--apple-border);
+        }
+        
+        .game-header {
+            text-align: center;
+            padding: 40px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 64px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--neon-blue), var(--battle-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(0, 180, 255, 0.3);
+        }
+        
+        .tagline {
+            font-size: 26px;
+            color: var(--apple-light);
+            font-weight: 300;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.4;
+        }
+        
+        .highlight {
+            color: var(--neon-blue);
+            font-weight: 500;
+        }
+        
+        /* 游戏容器 */
+        .game-container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto 50px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(0, 180, 255, 0.2);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--neon-blue);
+            position: relative;
+        }
+        
+        .game-container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple), var(--battle-orange));
+            z-index: -1;
+            border-radius: 18px;
+            animation: borderAnimation 3s infinite linear;
+        }
+        
+        @keyframes borderAnimation {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        
+        .game-frame {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+        
+        .game-frame iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* 游戏详情区域 */
+        .game-details {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin: 60px 0 30px;
+            position: relative;
+            padding-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), transparent);
+            border-radius: 2px;
+        }
+        
+        p {
+            font-size: 20px;
+            margin-bottom: 25px;
+            color: var(--apple-light);
+            line-height: 1.8;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .feature-card {
+            background: rgba(26, 54, 93, 0.4);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 180, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 180, 255, 0.2);
+            border-color: var(--neon-blue);
+        }
+        
+        .feature-card i {
+            font-size: 48px;
+            color: var(--neon-blue);
+            margin-bottom: 25px;
+        }
+        
+        .feature-card h3 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            color: var(--apple-light);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .feature-card p {
+            font-size: 18px;
+            color: #cbd5e1;
+        }
+        
+        .game-info {
+            background: rgba(26, 54, 93, 0.4);
+            border-radius: 18px;
+            padding: 35px;
+            margin: 40px 0;
+            border: 1px solid rgba(0, 180, 255, 0.2);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
+        }
+        
+        .info-item i {
+            color: var(--neon-blue);
+            font-size: 28px;
+            width: 50px;
+            text-align: center;
+        }
+        
+        .info-text {
+            flex: 1;
+        }
+        
+        .info-text strong {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 20px;
+            color: var(--apple-light);
+        }
+        
+        .info-text span {
+            color: #94a3b8;
+            font-size: 18px;
+        }
+        
+        .screenshot-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .screenshot {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            height: 200px;
+            background: var(--space-gray);
+            border: 1px solid var(--apple-border);
+            transition: all 0.3s;
+        }
+        
+        .screenshot:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 180, 255, 0.3);
+        }
+        
+        .screenshot img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .screenshot::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(0, 180, 255, 0.1), rgba(161, 0, 255, 0.1));
+        }
+        
+        /* 页脚 */
+        footer {
+            background-color: rgba(10, 14, 23, 0.9);
+            border-top: 1px solid var(--apple-border);
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--apple-light);
+            backdrop-filter: blur(10px);
+        }
+        
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 25px 0;
+            gap: 25px;
+        }
+        
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--neon-blue);
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(26, 54, 93, 0.5);
+            color: var(--apple-light);
+            font-size: 22px;
+            transition: all 0.3s;
+            border: 1px solid var(--apple-border);
+        }
+        
+        .social-icons a:hover {
+            background: var(--neon-blue);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            font-size: 16px;
+            margin-top: 25px;
+            color: #64748b;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 48px;
+            }
+            
+            .tagline {
+                font-size: 22px;
+            }
+            
+            h2 {
+                font-size: 36px;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+            
+            nav li {
+                margin-left: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                margin: 0;
+            }
+            
+            header, main {
+                padding: 0 20px;
+            }
+            
+            main {
+                margin: 15px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 40px;
+            }
+            
+            .tagline {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 32px;
+                margin: 50px 0 25px;
+            }
+            
+            .navbar {
+                height: 70px;
+            }
+            
+            .logo {
+                font-size: 22px;
+            }
+            
+            nav a {
+                font-size: 16px;
+            }
+            
+            .game-header {
+                padding: 30px 0;
+            }
+            
+            .feature-card {
+                padding: 25px;
+            }
+            
+            .game-info {
+                padding: 25px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 36px;
+            }
+            
+            .tagline {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 28px;
+            }
+            
+            .navbar {
+                flex-direction: column;
+                height: auto;
+                padding: 15px 0;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav li {
+                margin: 0 10px 10px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .screenshot-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="stars" id="stars"></div>
+    
+    <header>
+        <div class="navbar">
+            <a href="/" class="logo">
+                <i class="fas fa-rocket"></i>
+                STARCOMMAND
+            </a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/games">Games</a></li>
+                    <li><a href="/arcade">Arcade</a></li>
+                    <li><a href="/leaderboards">Leaderboards</a></li>
+                    <li><a href="/community">Community</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="game-header">
+            <h1>TANKS OF THE GALAXY</h1>
+            <p class="tagline">Command your battle tank through alien planets and <span class="highlight">defeat enemy forces</span> in this action-packed space shooter</p>
+        </div>
+        
+        <div class="game-container">
+            <div class="game-frame">
+                <iframe src="https://cloud.onlinegames.io/games/2024/gm/games6/tanks-of-the-galaxy/index.html" 
+                        title="Tanks of the Galaxy Game" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+            </div>
+        </div>
+        
+        <div class="game-details">
+            <h2>Galactic Warfare</h2>
+            <p>In the year 2287, humanity has expanded across the galaxy, but peace is fragile. As commander of the most advanced battle tank in the Terran Alliance, you're deployed to hostile alien planets where you must eliminate enemy forces, protect strategic locations, and uncover ancient alien technologies.</p>
+            <p>Navigate through treacherous extraterrestrial terrains, from the molten lava fields of Pyro IV to the frozen tundras of Cryos Prime. Each planet presents unique environmental challenges that affect your tank's mobility and combat capabilities.</p>
+            
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Tank Customization</h3>
+                    <p>Upgrade your tank with over 50 different weapons, armor, and propulsion systems to match your combat style.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-globe-americas"></i>
+                    <h3>Alien Planets</h3>
+                    <p>Battle across 12 unique alien worlds with distinct environments, enemies, and tactical challenges.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-robot"></i>
+                    <h3>Enemy Variety</h3>
+                    <p>Face over 30 different enemy types from swarming drones to massive alien walkers and boss tanks.</p>
+                </div>
+            </div>
+            
+            <h2>Combat Tactics</h2>
+            <p>Master the art of mechanized warfare with an arsenal of futuristic weapons. Switch between your primary cannon, secondary missiles, and special abilities to counter different enemy types. Use the environment to your advantage - take cover behind alien rock formations, lure enemies into environmental hazards, and position yourself on higher ground for tactical superiority.</p>
+            <p>Your tank's energy shield absorbs damage but requires strategic management. Overuse will leave you vulnerable during critical cooldown periods. Learn to balance offensive pressure with defensive positioning to survive the increasingly difficult enemy waves.</p>
+            
+            <div class="screenshot-gallery">
+                <div class="screenshot"></div>
+                <div class="screenshot"></div>
+                <div class="screenshot"></div>
+                <div class="screenshot"></div>
+            </div>
+            
+            <div class="game-info">
+                <h2>Battle Specifications</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <i class="fas fa-microchip"></i>
+                        <div class="info-text">
+                            <strong>Game Engine</strong>
+                            <span>Unity 2023</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-calendar-star"></i>
+                        <div class="info-text">
+                            <strong>Release Date</strong>
+                            <span>June 2024</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-gamepad"></i>
+                        <div class="info-text">
+                            <strong>Controls</strong>
+                            <span>WASD + Mouse</span>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-users"></i>
+                        <div class="info-text">
+                            <strong>Multiplayer</strong>
+                            <span>Co-op & PvP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <h2>Progression System</h2>
+            <p>Earn experience points and credits through successful missions. Unlock new tank chassis with specialized abilities - from lightning-fast scout tanks to heavily armored siege engines. Research alien technology to develop powerful hybrid weapons that combine human engineering with extraterrestrial power sources.</p>
+            <p>Your pilot gains special abilities as they level up, allowing you to temporarily boost your tank's performance, call in orbital strikes, or deploy combat drones. Choose skill paths that complement your preferred combat style - become a mobile skirmisher, an unstoppable juggernaut, or a long-range artillery specialist.</p>
+            
+            <h2>Advanced Strategies</h2>
+            <p>To dominate the galactic battlefields, consider these advanced tactics:</p>
+            <p><strong>1. Weapon Synergy:</strong> Combine weapons that complement each other. Use area-effect weapons to strip shields followed by precision weapons to damage critical components.</p>
+            <p><strong>2. Terrain Utilization:</strong> Different terrains affect mobility. Use hover mode on marshy planets and switch to tracked movement on rocky surfaces.</p>
+            <p><strong>3. Weak Point Targeting:</strong> Study enemy designs to identify and target critical weak points for maximum damage.</p>
+            <p><strong>4. Energy Management:</strong> Balance weapon fire with shield regeneration. Overheating your systems leaves you vulnerable.</p>
+            <p><strong>5. Adaptive Loadouts:</strong> Customize your tank before each mission based on the planet environment and expected enemy types.</p>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-discord"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="footer-links">
+                <a href="/privacy">Privacy Policy</a>
+                <a href="/terms">Terms of Service</a>
+                <a href="/support">Support</a>
+                <a href="/about">About Us</a>
+                <a href="/careers">Careers</a>
+                <a href="/press">Press Kit</a>
+            </div>
+            <p class="copyright">© 2024 StarCommand Games. All rights reserved. "Tanks of the Galaxy" is a trademark of StarCommand Interactive.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 创建星空背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starsCount = 200;
+            
+            for (let i = 0; i < starsCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // 随机位置
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // 随机大小
+                const size = Math.random() * 3;
+                
+                // 随机闪烁时间
+                const duration = 2 + Math.random() * 5;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${duration}s`);
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // 页面加载完成后创建星星
+        document.addEventListener('DOMContentLoaded', createStars);
+        
+        // 添加动态效果
+        document.addEventListener('mousemove', (e) => {
+            const gameHeader = document.querySelector('.game-header');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            gameHeader.style.backgroundPosition = `${x * 20}% ${y * 20}%`;
+        });
+    </script>
+</body>
+</html>
